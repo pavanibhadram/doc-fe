@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DocumentService } from '../../services/document.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,10 +10,10 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
-export class ReviewerDashboardComponent {
+export class ReviewerDashboardComponent implements OnInit {
   documents: any[] = [];
   selectedDoc: any = null;
-  reviewComment = '';
+  reviewComments: string = '';
 
   constructor(private documentService: DocumentService) {}
 
@@ -21,46 +21,67 @@ export class ReviewerDashboardComponent {
     this.loadDocuments();
   }
 
-  // ✅ Fetch documents from backend and filter "Under Review"
-  loadDocuments() {
-    this.documentService.getDocuments().subscribe((allDocs: any[]) => {
-      this.documents = allDocs.filter((d: any) => d.status === 'Under Review');
+  // ✅ Load only documents that are ready for review
+  loadDocuments(): void {
+    this.documentService.getDocuments().subscribe({
+      next: (data) => {
+        this.documents = data.filter(
+          (doc) => doc.status === 'Under Review' || doc.status === 'In Review'
+        );
+      },
+      error: (err) => console.error('Error fetching documents:', err),
     });
   }
 
-  openDocument(doc: any) {
+  // ✅ Open a document for review
+  openDocument(doc: any): void {
     this.selectedDoc = doc;
-    this.reviewComment = '';
+    this.reviewComments = doc.reviewComments || '';
   }
 
-  sendBackToAuthor() {
-    this.updateStatus('Changes Requested');
-  }
-
-  sendToApprover() {
-    this.updateStatus('Approved by Reviewer');
-  }
-
-  // ✅ Update document with new status and review comment
-  updateStatus(newStatus: string) {
+  // ✅ Send document back to Author
+  sendBackToAuthor(): void {
     if (!this.selectedDoc) return;
 
     const updatedDoc = {
       ...this.selectedDoc,
-      status: newStatus,
-      reviewComment: this.reviewComment,
+      status: 'Needs Revision',
+      reviewComments: this.reviewComments,
     };
 
-    this.documentService.saveDocument(updatedDoc).subscribe(() => {
-      alert(
-        `Document ${
-          newStatus === 'Changes Requested'
-            ? 'sent back to Author'
-            : 'sent to Approver'
-        }!`
-      );
-      this.selectedDoc = null;
-      this.loadDocuments();
-    });
+    this.documentService
+      .updateDocument(this.selectedDoc._id, updatedDoc)
+      .subscribe({
+        next: () => {
+          alert('📤 Sent back to Author for revisions.');
+          this.selectedDoc = null;
+          this.reviewComments = '';
+          this.loadDocuments();
+        },
+        error: (err) => console.error('Error sending back to author:', err),
+      });
+  }
+
+  // ✅ Approve document for Approver stage
+  approveForApprover(): void {
+    if (!this.selectedDoc) return;
+
+    const updatedDoc = {
+      ...this.selectedDoc,
+      status: 'Awaiting Approval',
+      reviewComments: this.reviewComments,
+    };
+
+    this.documentService
+      .updateDocument(this.selectedDoc._id, updatedDoc)
+      .subscribe({
+        next: () => {
+          alert('✅ Sent to Approver for final approval.');
+          this.selectedDoc = null;
+          this.reviewComments = '';
+          this.loadDocuments();
+        },
+        error: (err) => console.error('Error sending to approver:', err),
+      });
   }
 }

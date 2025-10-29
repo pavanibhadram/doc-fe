@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DocumentService } from '../../services/document.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,10 +10,11 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
-export class ApproverDashboardComponent {
+export class ApproverDashboardComponent implements OnInit {
   documents: any[] = [];
   selectedDoc: any = null;
-  digitalSignature = '';
+  digitalSignature: string = '';
+  approvalComment: string = '';
 
   constructor(private documentService: DocumentService) {}
 
@@ -21,57 +22,69 @@ export class ApproverDashboardComponent {
     this.loadDocuments();
   }
 
-  // ✅ Use subscribe() to fetch and filter documents
+  // ✅ Load documents from backend
   loadDocuments() {
-    this.documentService.getDocuments().subscribe((allDocs: any[]) => {
-      this.documents = allDocs.filter(
-        (d: any) => d.status === 'Approved by Reviewer'
-      );
+    this.documentService.getDocuments().subscribe({
+      next: (docs) => {
+        // Filter documents that are awaiting approval
+        this.documents = docs.filter(
+          (doc) => doc.status === 'Approved by Reviewer'
+        );
+      },
+      error: (err) => console.error('Error loading documents:', err),
     });
   }
 
   openDocument(doc: any) {
     this.selectedDoc = doc;
-    this.digitalSignature = '';
   }
 
-  // ✅ Approve and sign document
+  // 🔙 Send document back to reviewer
+  sendBackToReviewer() {
+    if (!this.selectedDoc) return;
+    const updatedDoc = {
+      ...this.selectedDoc,
+      status: 'Sent Back to Reviewer',
+      approvalComment: this.approvalComment || 'Please revise and resubmit.',
+    };
+
+    this.documentService
+      .updateDocument(this.selectedDoc._id, updatedDoc)
+      .subscribe({
+        next: () => {
+          alert('Document sent back to reviewer!');
+          this.selectedDoc = null;
+          this.loadDocuments();
+        },
+        error: (err) => console.error('Error sending back document:', err),
+      });
+  }
+
+  // ✅ Approve & digitally sign document
   approveAndSign() {
-    if (!this.digitalSignature.trim()) {
-      alert('Please enter your digital signature before approving.');
+    if (!this.selectedDoc || !this.digitalSignature.trim()) {
+      alert('Please add your digital signature before approving.');
       return;
     }
-
-    if (!this.selectedDoc) return;
 
     const updatedDoc = {
       ...this.selectedDoc,
       status: 'Approved & Signed',
-      approvedBy: 'Approver',
-      signature: this.digitalSignature,
-      approvedAt: new Date().toISOString(),
+      approvalComment: this.approvalComment || 'Approved by Approver',
+      digitalSignature: this.digitalSignature,
     };
 
-    this.documentService.saveDocument(updatedDoc).subscribe(() => {
-      alert('Document Approved and Digitally Signed!');
-      this.selectedDoc = null;
-      this.loadDocuments();
-    });
-  }
-
-  // ✅ Send document back to reviewer
-  sendBackToReviewer() {
-    if (!this.selectedDoc) return;
-
-    const updatedDoc = {
-      ...this.selectedDoc,
-      status: 'Sent Back to Reviewer',
-    };
-
-    this.documentService.saveDocument(updatedDoc).subscribe(() => {
-      alert('Document sent back to Reviewer!');
-      this.selectedDoc = null;
-      this.loadDocuments();
-    });
+    this.documentService
+      .updateDocument(this.selectedDoc._id, updatedDoc)
+      .subscribe({
+        next: () => {
+          alert('✅ Document approved and signed successfully!');
+          this.selectedDoc = null;
+          this.digitalSignature = '';
+          this.approvalComment = '';
+          this.loadDocuments();
+        },
+        error: (err) => console.error('Error approving document:', err),
+      });
   }
 }

@@ -15,12 +15,16 @@ export class DocumentService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  saveDocument(doc: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, doc);
+  getDocumentById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  updateDocument(id: string, updatedDoc: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, updatedDoc);
+  saveDocument(document: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, document);
+  }
+
+  updateDocument(id: string, document: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, document);
   }
 
   deleteDocument(id: string): Observable<any> {

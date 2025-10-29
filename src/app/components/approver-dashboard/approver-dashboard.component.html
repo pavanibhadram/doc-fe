@@ -1,68 +1,54 @@
-<div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-        <!-- Header -->
-        <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
-            <div class="flex items-center gap-3">
-                <img src="assets/logo.png" alt="logo" class="h-10" />
-                <h2 class="text-2xl font-bold text-blue-700">Approver Dashboard</h2>
-            </div>
-            <span class="text-sm text-gray-500">Role: Approver</span>
+<div class="p-6 max-w-5xl mx-auto bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">🖋️ Approver Dashboard</h2>
+
+    <!-- Document List -->
+    <div *ngIf="!selectedDoc">
+        <h3 class="text-lg font-semibold mb-3 text-gray-700">Documents Awaiting Approval</h3>
+
+        <ul class="space-y-2">
+            <li *ngFor="let doc of documents"
+                class="p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50">
+                <div>
+                    <strong>{{ doc.title }}</strong>
+                    <p class="text-sm text-gray-600">{{ doc.status }}</p>
+                </div>
+                <button (click)="openDocument(doc)"
+                    class="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600">
+                    Open
+                </button>
+            </li>
+        </ul>
+
+        <div *ngIf="documents.length === 0" class="text-gray-500 mt-4">
+            No documents pending approval.
         </div>
+    </div>
 
-        <!-- List View -->
-        <div *ngIf="!selectedDoc">
-            <h3 class="text-xl font-semibold text-gray-700 mb-4">Documents Ready for Approval</h3>
+    <!-- Approve & Sign Section -->
+    <div *ngIf="selectedDoc" class="mt-4">
+        <h3 class="text-xl font-semibold mb-2">{{ selectedDoc.title }}</h3>
+        <p class="whitespace-pre-wrap border p-3 rounded-lg bg-gray-50 mb-4">
+            {{ selectedDoc.content }}
+        </p>
 
-            <div *ngIf="documents.length === 0" class="text-gray-500 text-center py-8">
-                No documents awaiting approval.
-            </div>
+        <!-- Approval Comment -->
+        <label class="block text-gray-700 font-semibold mb-2">Approval Comment:</label>
+        <textarea [(ngModel)]="approvalComment" rows="3" placeholder="Write your approval comments..."
+            class="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-green-300 mb-4"></textarea>
 
-            <div *ngFor="let doc of documents" (click)="openDocument(doc)"
-                class="border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-green-50 transition">
-                <h4 class="font-bold text-gray-800 text-lg">{{ doc.title }}</h4>
-                <p class="text-gray-500 text-sm mt-1">Created by: {{ doc.createdBy }}</p>
-                <p class="text-xs text-gray-400 mt-1">Reviewed on: {{ doc.reviewedAt || 'Pending' }}</p>
-            </div>
-        </div>
+        <!-- Digital Signature -->
+        <label class="block text-gray-700 font-semibold mb-2">Digital Signature:</label>
+        <input type="text" [(ngModel)]="digitalSignature" placeholder="Enter your digital signature"
+            class="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-green-300 mb-4" />
 
-        <!-- Detail View -->
-        <div *ngIf="selectedDoc" class="space-y-6">
-            <button (click)="selectedDoc = null" class="text-green-600 hover:underline text-sm mb-4">
-                ← Back to list
+        <div class="flex justify-end gap-4">
+            <button (click)="sendBackToReviewer()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                🔙 Send Back to Reviewer
             </button>
 
-            <h3 class="text-2xl font-semibold text-gray-800">{{ selectedDoc.title }}</h3>
-
-            <p class="whitespace-pre-wrap text-gray-700 border border-gray-200 rounded-xl p-4 bg-gray-50">
-                {{ selectedDoc.content }}
-            </p>
-
-            <div class="border border-gray-100 rounded-xl p-4 bg-gray-50">
-                <h4 class="font-semibold text-gray-700">Reviewer’s Comment</h4>
-                <p class="text-gray-600 mt-2">{{ selectedDoc.reviewComment || 'No comments.' }}</p>
-            </div>
-
-            <div>
-                <label class="block text-gray-700 font-medium mb-2">Digital Signature</label>
-                <input [(ngModel)]="digitalSignature" type="text" placeholder="Enter your name or digital signature"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400" />
-            </div>
-
-            <div class="flex justify-end gap-4">
-                <button (click)="sendBackToReviewer()"
-                    class="px-6 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-medium transition">
-                    Send Back
-                </button>
-                <button (click)="approveAndSign()"
-                    class="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition">
-                    Approve & Sign
-                </button>
-            </div>
+            <button (click)="approveAndSign()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                ✅ Approve & Sign
+            </button>
         </div>
-
-        <!-- Footer -->
-        <footer class="text-center text-gray-500 text-sm mt-10 border-t border-gray-200 pt-4">
-            © 2025 Your Company Name. All Rights Reserved.
-        </footer>
     </div>
 </div>

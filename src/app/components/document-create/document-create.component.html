@@ -1,39 +1,25 @@
-<div class="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
-    <div class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6 border-b border-gray-200 pb-4">
-            <div class="flex items-center gap-3">
-                <img src="assets/logo.png" alt="Company Logo" class="h-10 w-auto" />
-                <h2 class="text-2xl font-bold text-blue-700">Create New Document</h2>
-            </div>
-            <span class="text-gray-500 text-sm">Role: Author</span>
-        </div>
+<div class="p-6 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">📝 Create New Document</h2>
 
-        <!-- Document Title -->
-        <label class="block text-gray-700 font-medium mb-2">Document Title</label>
+    <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-2">Title:</label>
         <input type="text" [(ngModel)]="documentTitle" placeholder="Enter document title"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-6 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            class="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300" />
+    </div>
 
-        <!-- Document Content -->
-        <label class="block text-gray-700 font-medium mb-2">Content</label>
-        <textarea [(ngModel)]="documentContent" rows="12" placeholder="Start writing your document..."
-            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-8 whitespace-pre-wrap"></textarea>
+    <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-2">Content:</label>
+        <textarea [(ngModel)]="documentContent" placeholder="Enter document content here..." rows="6"
+            class="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"></textarea>
+    </div>
 
-        <!-- Buttons -->
-        <div class="flex justify-end gap-4">
-            <button (click)="saveDraft()"
-                class="px-6 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-white font-medium transition">
-                Save Draft
-            </button>
-            <button (click)="sendForReview()"
-                class="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition">
-                Send for Review
-            </button>
-        </div>
+    <div class="flex justify-end gap-4">
+        <button (click)="saveDraft()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+            💾 Save as Draft
+        </button>
 
-        <!-- Footer -->
-        <footer class="text-center text-gray-500 text-sm mt-8 border-t border-gray-200 pt-4">
-            © 2025 Your Company Name. All Rights Reserved.
-        </footer>
+        <button (click)="sendForReview()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+            📤 Send for Review
+        </button>
     </div>
 </div>
