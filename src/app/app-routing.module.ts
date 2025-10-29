@@ -6,6 +6,7 @@ import { ReviewerDashboardComponent } from './components/reviewer-dashboard/revi
 import { ApproverDashboardComponent } from './components/approver-dashboard/approver-dashboard.component';
 import { roleGuard } from './guards/role.guard';
 import { DocumentApproveComponent } from './components/document-approve/document-approve.component';
+import { AuthorDashboardComponent } from './components/author-dashboard/author-dashboard.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -21,6 +22,7 @@ const routes: Routes = [
     component: DocumentApproveComponent,
     canActivate: [roleGuard],
   },
+  { path: 'author-dashboard', component: AuthorDashboardComponent },
 ];
 
 @NgModule({

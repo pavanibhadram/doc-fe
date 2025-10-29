@@ -20,7 +20,6 @@ export class DocumentCreateComponent {
     private router: Router
   ) {}
 
-  // ✅ Save as draft
   saveDraft() {
     const doc = {
       title: this.documentTitle,
@@ -31,11 +30,10 @@ export class DocumentCreateComponent {
     };
 
     this.documentService.saveDocument(doc).subscribe(() => {
-      alert('Draft saved successfully!');
+      alert('✅ Draft saved successfully!');
     });
   }
 
-  // ✅ Send to reviewer for review
   sendForReview() {
     const doc = {
       title: this.documentTitle,
@@ -46,7 +44,7 @@ export class DocumentCreateComponent {
     };
 
     this.documentService.saveDocument(doc).subscribe(() => {
-      alert('Document sent for review!');
+      alert('📤 Document sent for review!');
       this.router.navigate(['/author']);
     });
   }

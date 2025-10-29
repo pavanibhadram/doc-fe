@@ -1,1 +1,46 @@
-<p>author-dashboard works!</p>
+<div class="p-6 max-w-5xl mx-auto bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">✍️ Author Dashboard</h2>
+
+    <!-- Inline status message -->
+    <div *ngIf="message" class="mb-4">
+        <div class="p-3 rounded-lg text-white" [ngClass]="{
+        'bg-green-600': messageType === 'success',
+        'bg-red-600': messageType === 'error',
+        'bg-blue-600': messageType === 'info'
+      }">
+            {{ message }}
+        </div>
+    </div>
+
+    <!-- New Document Form -->
+    <div *ngIf="!selectedDoc">
+        <h3 class="text-lg font-semibold mb-3 text-gray-700">Create New Document</h3>
+
+        <input type="text" [(ngModel)]="newDoc.title" placeholder="Enter document title"
+            class="w-full p-2 border rounded mb-3 focus:ring focus:ring-blue-300" />
+
+        <textarea [(ngModel)]="newDoc.content" rows="6" placeholder="Write your content..."
+            class="w-full p-2 border rounded mb-3 focus:ring focus:ring-blue-300"></textarea>
+
+        <div class="flex justify-end gap-3">
+            <button (click)="saveDocument()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                💾 Save
+            </button>
+            <button (click)="submitForReview()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                📤 Submit for Review
+            </button>
+        </div>
+    </div>
+
+    <!-- Document Preview -->
+    <div *ngIf="selectedDoc" class="mt-4">
+        <h3 class="text-xl font-semibold mb-2">{{ selectedDoc.title }}</h3>
+        <p class="whitespace-pre-wrap border p-3 rounded bg-gray-50 mb-4">
+            {{ selectedDoc.content }}
+        </p>
+
+        <button (click)="closePreview()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+            🔙 Back
+        </button>
+    </div>
+</div>
