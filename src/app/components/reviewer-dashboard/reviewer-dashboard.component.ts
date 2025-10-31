@@ -12,8 +12,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class ReviewerDashboardComponent implements OnInit {
   documents: any[] = [];
-  selectedDoc: any = null;
-  reviewComments: string = '';
 
   constructor(private documentService: DocumentService) {}
 
@@ -21,67 +19,36 @@ export class ReviewerDashboardComponent implements OnInit {
     this.loadDocuments();
   }
 
-  // ✅ Load only documents that are ready for review
   loadDocuments(): void {
     this.documentService.getDocuments().subscribe({
-      next: (data) => {
-        this.documents = data.filter(
-          (doc) => doc.status === 'Under Review' || doc.status === 'In Review'
-        );
+      next: (data: any[]) => {
+        this.documents = data.filter((d) => d.status === 'Under Review');
       },
-      error: (err) => console.error('Error fetching documents:', err),
+      error: (err) => console.error('Error loading documents', err),
     });
   }
 
-  // ✅ Open a document for review
-  openDocument(doc: any): void {
-    this.selectedDoc = doc;
-    this.reviewComments = doc.reviewComments || '';
-  }
-
-  // ✅ Send document back to Author
-  sendBackToAuthor(): void {
-    if (!this.selectedDoc) return;
-
-    const updatedDoc = {
-      ...this.selectedDoc,
-      status: 'Needs Revision',
-      reviewComments: this.reviewComments,
-    };
-
+  approveDocument(id: string): void {
     this.documentService
-      .updateDocument(this.selectedDoc._id, updatedDoc)
+      .updateDocument(id, { status: 'Approved by Reviewer' })
       .subscribe({
         next: () => {
-          alert('📤 Sent back to Author for revisions.');
-          this.selectedDoc = null;
-          this.reviewComments = '';
+          alert('✅ Document approved successfully!');
           this.loadDocuments();
         },
-        error: (err) => console.error('Error sending back to author:', err),
+        error: () => alert('❌ Failed to approve document.'),
       });
   }
 
-  // ✅ Approve document for Approver stage
-  approveForApprover(): void {
-    if (!this.selectedDoc) return;
-
-    const updatedDoc = {
-      ...this.selectedDoc,
-      status: 'Awaiting Approval',
-      reviewComments: this.reviewComments,
-    };
-
+  sendBack(id: string): void {
     this.documentService
-      .updateDocument(this.selectedDoc._id, updatedDoc)
+      .updateDocument(id, { status: 'Sent Back to Author' })
       .subscribe({
         next: () => {
-          alert('✅ Sent to Approver for final approval.');
-          this.selectedDoc = null;
-          this.reviewComments = '';
+          alert('📨 Document sent back to Author.');
           this.loadDocuments();
         },
-        error: (err) => console.error('Error sending to approver:', err),
+        error: () => alert('❌ Failed to send back document.'),
       });
   }
 }

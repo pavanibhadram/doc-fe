@@ -1,1 +1,61 @@
-<p>login works!</p>
+<!-- Outer container -->
+<div class="min-h-screen flex flex-col bg-gray-50 text-[#16205B] mt-4 w-[80%] mx-auto">
+
+    <!-- Hero Section -->
+    <section class=" flex-1 flex flex-col justify-center items-center text-center p-8">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+            Document Workflow
+        </h2>
+        <p class="text-gray-600 max-w-2xl mb-6">
+            Create, review, approve, and digitally sign your documents — all in one
+            secure platform.
+        </p>
+        <button class="bg-[#F4B058] text-white px-6 py-3 rounded-lg hover:bg-[#D05D2C] transition">
+            Get Started
+        </button>
+    </section>
+
+    <!-- Roles Section -->
+    <section class="py-16 bg-white">
+        <h3 class="text-3xl font-semibold text-center mb-10">
+            Choose Your Role
+        </h3>
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6 sm:px-8 md:px-0">
+            <!-- Author -->
+            <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition text-center">
+                <h4 class="text-xl font-bold mb-2">Author</h4>
+                <p class="text-gray-600">
+                    Create and submit documents for review and approval.
+                </p>
+                <button routerLink="/author-dashboard"
+                    class="mt-4 bg-[#F4B058] text-white px-4 py-2 rounded-lg hover:bg-[#D05D2C]">
+                    Go to Dashboard
+                </button>
+            </div>
+
+            <!-- Reviewer -->
+            <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition text-center">
+                <h4 class="text-xl font-bold mb-2">Reviewer</h4>
+                <p class="text-gray-600">
+                    Review, comment, and send documents for approval.
+                </p>
+                <button routerLink="/reviewer-dashboard"
+                    class="mt-4 bg-[#F4B058] text-white px-4 py-2 rounded-lg hover:bg-[#D05D2C]">
+                    Go to Dashboard
+                </button>
+            </div>
+
+            <!-- Approver -->
+            <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition text-center">
+                <h4 class="text-xl font-bold mb-2">Approver</h4>
+                <p class="text-gray-600">
+                    Approve and digitally sign finalized documents.
+                </p>
+                <button routerLink="/approver-dashboard"
+                    class="mt-4 bg-[#F4B058] text-white px-4 py-2 rounded-lg hover:bg-[#D05D2C]">
+                    Go to Dashboard
+                </button>
+            </div>
+        </div>
+    </section>
+</div>

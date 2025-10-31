@@ -7,7 +7,7 @@ import { environment } from '../../environment/environment';
   providedIn: 'root',
 })
 export class DocumentService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/api/documents`;
 
   constructor(private http: HttpClient) {}
 
@@ -15,19 +15,27 @@ export class DocumentService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  getDocumentById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getDocumentsByAuthor(author: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?author=${author}`);
   }
 
-  saveDocument(document: any): Observable<any> {
+  createDocument(document: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, document);
   }
 
-  updateDocument(id: string, document: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, document);
+  // ✅ For older components
+  saveDocument(document: any): Observable<any> {
+    return this.createDocument(document);
+  }
+
+  updateDocument(id: string, documentData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, documentData);
   }
 
   deleteDocument(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+  submitForReview(id: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/submit`, {}); // matches backend route
   }
 }
