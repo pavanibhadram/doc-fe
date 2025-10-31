@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { DocumentService } from '../../services/document.service';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-author-dashboard',
   templateUrl: './author-dashboard.component.html',
   styleUrl: './author-dashboard.component.css',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
 })
 export class AuthorDashboardComponent implements OnInit {
   documents: any[] = [];
+  showCreateForm = false;
+  isEditing = false;
+  formData = { title: '', content: '' };
   selectedDoc: any = null;
-
-  newDoc = {
-    title: '',
-    content: '',
-    status: 'Draft',
-  };
-
-  message = '';
-  messageType: 'success' | 'error' | 'info' | '' = '';
 
   constructor(private documentService: DocumentService) {}
 
@@ -25,69 +24,66 @@ export class AuthorDashboardComponent implements OnInit {
     this.loadDocuments();
   }
 
-  loadDocuments() {
-    this.documentService.getDocuments().subscribe({
-      next: (data) => (this.documents = data),
-      error: () => this.showMessage('Failed to load documents.', 'error'),
+  loadDocuments(): void {
+    const username = localStorage.getItem('username') || 'Author';
+    this.documentService.getDocumentsByAuthor(username).subscribe({
+      next: (docs: any[]) => (this.documents = docs),
+      error: (err) => console.error('Error fetching documents', err),
     });
   }
 
-  saveDocument() {
-    if (!this.newDoc.title || !this.newDoc.content) {
-      this.showMessage('Please fill in all fields.', 'error');
+  toggleCreateForm(): void {
+    this.showCreateForm = !this.showCreateForm;
+    this.isEditing = false;
+    this.formData = { title: '', content: '' };
+  }
+
+  saveDraft(): void {
+    if (!this.formData.title.trim() || !this.formData.content.trim()) {
+      alert('⚠️ Please fill in both Title and Content before saving.');
       return;
     }
 
-    const newDocument = {
-      ...this.newDoc,
-      createdBy: 'Author',
-    };
+    const username = localStorage.getItem('username') || 'Author';
+    const newDoc = { ...this.formData, author: username, status: 'Draft' };
 
-    this.documentService.saveDocument(newDocument).subscribe({
+    this.documentService.createDocument(newDoc).subscribe({
       next: () => {
-        this.showMessage('Document saved successfully!', 'success');
-        this.newDoc = { title: '', content: '', status: 'Draft' };
+        alert('💾 Document saved as draft!');
         this.loadDocuments();
+        this.showCreateForm = false;
       },
-      error: (err) => {
-        console.error('❌ Save error:', err);
-        this.showMessage('Failed to save document.', 'error');
-      },
+      error: () => alert('❌ Failed to save draft.'),
     });
   }
 
-  submitForReview() {
-    if (!this.newDoc.title || !this.newDoc.content) {
-      this.showMessage('Please fill in all fields.', 'error');
+  editDocument(doc: any): void {
+    this.isEditing = true;
+    this.showCreateForm = true;
+    this.selectedDoc = doc;
+    this.formData = { title: doc.title, content: doc.content };
+  }
+
+  submitForReview(): void {
+    if (!this.formData.title.trim() || !this.formData.content.trim()) {
+      alert('⚠️ Please fill in both Title and Content before submitting.');
       return;
     }
 
-    const reviewDoc = {
-      ...this.newDoc,
+    const username = localStorage.getItem('username') || 'Author';
+    const newDoc = {
+      ...this.formData,
+      author: username,
       status: 'Under Review',
-      createdBy: 'Author',
     };
 
-    this.documentService.saveDocument(reviewDoc).subscribe({
+    this.documentService.createDocument(newDoc).subscribe({
       next: () => {
-        this.showMessage('Document submitted for review!', 'success');
-        this.newDoc = { title: '', content: '', status: 'Draft' };
+        alert('📤 Document sent to Reviewer successfully!');
         this.loadDocuments();
+        this.showCreateForm = false;
       },
-      error: (err) => {
-        console.error('❌ Review error:', err);
-        this.showMessage('Failed to submit for review.', 'error');
-      },
+      error: () => alert('❌ Failed to submit document.'),
     });
-  }
-
-  closePreview() {
-    this.selectedDoc = null;
-  }
-
-  showMessage(text: string, type: 'success' | 'error' | 'info') {
-    this.message = text;
-    this.messageType = type;
-    setTimeout(() => (this.message = ''), 3000);
   }
 }

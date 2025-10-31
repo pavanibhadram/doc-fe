@@ -9,7 +9,8 @@ import { DocumentApproveComponent } from './components/document-approve/document
 import { AuthorDashboardComponent } from './components/author-dashboard/author-dashboard.component';
 
 const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   { path: 'document-create', component: DocumentCreateComponent },
   { path: 'reviewer-dashboard', component: ReviewerDashboardComponent },
   {

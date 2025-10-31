@@ -18,12 +18,7 @@ import { DocumentReviewComponent } from './components/document-review/document-r
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    AuthorDashboardComponent,
-    DocumentReviewComponent,
-  ],
+  declarations: [AppComponent, LoginComponent, DocumentReviewComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideHttpClient(withInterceptorsFromDi())],
   bootstrap: [AppComponent],
