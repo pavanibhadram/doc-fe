@@ -16,6 +16,7 @@ import { DocumentCreateComponent } from './components/document-create/document-c
 import { DocumentApproveComponent } from './components/document-approve/document-approve.component';
 import { DocumentReviewComponent } from './components/document-review/document-review.component';
 import { FormsModule } from '@angular/forms';
+import { FinalDocumentsComponent } from './components/final-documents/final-documents.component';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, DocumentReviewComponent],

@@ -3,6 +3,7 @@ import { DocumentService } from '../../services/document.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-document-create',
@@ -17,35 +18,52 @@ export class DocumentCreateComponent {
 
   constructor(
     private documentService: DocumentService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   saveDraft() {
+    if (!this.documentTitle.trim() || !this.documentContent.trim()) {
+      alert('Please fill Title and Content.');
+      return;
+    }
     const doc = {
       title: this.documentTitle,
       content: this.documentContent,
       status: 'Draft',
-      createdBy: 'Author',
-      createdAt: new Date(),
+      author: this.authService.getUsername(),
     };
 
-    this.documentService.saveDocument(doc).subscribe(() => {
-      alert('✅ Draft saved successfully!');
+    this.documentService.saveDocument(doc).subscribe({
+      next: () => {
+        alert('Draft saved');
+        this.documentTitle = '';
+        this.documentContent = '';
+      },
+      error: () => alert('Failed to save draft'),
     });
   }
 
   sendForReview() {
+    if (!this.documentTitle.trim() || !this.documentContent.trim()) {
+      alert('Please fill Title and Content.');
+      return;
+    }
     const doc = {
       title: this.documentTitle,
       content: this.documentContent,
       status: 'Under Review',
-      createdBy: 'Author',
-      createdAt: new Date(),
+      author: this.authService.getUsername(),
     };
 
-    this.documentService.saveDocument(doc).subscribe(() => {
-      alert('📤 Document sent for review!');
-      this.router.navigate(['/author']);
+    this.documentService.createDocument(doc).subscribe({
+      next: () => {
+        alert('Document submitted for review');
+        this.documentTitle = '';
+        this.documentContent = '';
+        this.router.navigate(['/author-dashboard']);
+      },
+      error: () => alert('Failed to send for review'),
     });
   }
 }

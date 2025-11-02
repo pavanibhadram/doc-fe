@@ -5,28 +5,24 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  private loggedInUser: any = null;
-
   constructor(private router: Router) {}
 
-  getLoggedInUser() {
-    if (!this.loggedInUser) {
-      const user = localStorage.getItem('user');
-      if (user) {
-        this.loggedInUser = JSON.parse(user);
-      }
-    }
-    return this.loggedInUser;
+  // store user object { username: 'Author' } in localStorage on login
+  setLoggedInUser(user: any) {
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
-  // ✅ Add this method
+  getLoggedInUser() {
+    const raw = localStorage.getItem('user');
+    return raw ? JSON.parse(raw) : null;
+  }
+
   getUsername(): string {
-    const user = this.getLoggedInUser();
-    return user ? user.username : '';
+    const u = this.getLoggedInUser();
+    return u ? u.username : 'Author';
   }
 
   logout() {
-    this.loggedInUser = null;
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }

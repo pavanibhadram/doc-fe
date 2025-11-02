@@ -13,8 +13,8 @@ import { FormsModule } from '@angular/forms';
 export class ApproverDashboardComponent implements OnInit {
   documents: any[] = [];
   selectedDoc: any = null;
-  digitalSignature: string = '';
-  approvalComment: string = '';
+  digitalSignature = '';
+  approvalComment = '';
   message = '';
   messageType: 'success' | 'error' | '' = '';
 
@@ -24,31 +24,33 @@ export class ApproverDashboardComponent implements OnInit {
     this.loadDocuments();
   }
 
-  // ✅ Load documents pending final approval
-  loadDocuments() {
+  loadDocuments(): void {
     this.documentService.getDocuments().subscribe({
-      next: (docs) => {
+      next: (docs: any[]) => {
+        // documents that were forwarded to approver by reviewer
         this.documents = docs.filter(
-          (doc) => doc.status === 'Approved by Reviewer'
+          (doc) => doc.status === 'Under Approver Review'
         );
       },
-      error: () => this.showMessage('Failed to load documents.', 'error'),
+      error: (err) => {
+        console.error('Error loading documents', err);
+        this.showMessage('Failed to load documents.', 'error');
+      },
     });
   }
 
-  // ✅ Open a specific document for approval
-  openDocument(doc: any) {
+  openDocument(doc: any): void {
     this.selectedDoc = doc;
+    this.digitalSignature = '';
+    this.approvalComment = '';
   }
 
-  // 🔙 Send document back to reviewer
-  sendBackToReviewer() {
+  sendBackToReviewer(): void {
     if (!this.selectedDoc) return;
-
     const updatedDoc = {
       ...this.selectedDoc,
       status: 'Sent Back to Reviewer',
-      approvalComment: this.approvalComment || 'Please revise and resubmit.',
+      reviewComment: this.approvalComment || 'Please revise and resubmit.',
     };
 
     this.documentService
@@ -63,9 +65,9 @@ export class ApproverDashboardComponent implements OnInit {
       });
   }
 
-  // ✅ Approve & digitally sign document
-  approveAndSign() {
-    if (!this.selectedDoc || !this.digitalSignature.trim()) {
+  approveAndSign(): void {
+    if (!this.selectedDoc) return;
+    if (!this.digitalSignature.trim()) {
       this.showMessage(
         'Please add your digital signature before approving.',
         'error'
@@ -76,8 +78,9 @@ export class ApproverDashboardComponent implements OnInit {
     const updatedDoc = {
       ...this.selectedDoc,
       status: 'Approved & Signed',
-      approvalComment: this.approvalComment || 'Approved by Approver',
-      digitalSignature: this.digitalSignature,
+      approvedBy: 'Approver', // or use real logged-in name
+      signature: this.digitalSignature,
+      reviewComment: this.approvalComment || 'Approved',
     };
 
     this.documentService
@@ -85,7 +88,7 @@ export class ApproverDashboardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.showMessage(
-            '✅ Document approved and signed successfully!',
+            'Document approved and signed successfully!',
             'success'
           );
           this.resetForm();
@@ -95,21 +98,16 @@ export class ApproverDashboardComponent implements OnInit {
       });
   }
 
-  // ✅ Close current document view
-  closeDocument() {
+  closeDocument(): void {
+    this.resetForm();
+  }
+
+  private resetForm(): void {
     this.selectedDoc = null;
     this.digitalSignature = '';
     this.approvalComment = '';
   }
 
-  // ✅ Reset after action
-  private resetForm() {
-    this.selectedDoc = null;
-    this.digitalSignature = '';
-    this.approvalComment = '';
-  }
-
-  // ✅ Show inline message
   showMessage(text: string, type: 'success' | 'error') {
     this.message = text;
     this.messageType = type;

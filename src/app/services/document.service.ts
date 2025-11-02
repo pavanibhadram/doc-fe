@@ -16,14 +16,13 @@ export class DocumentService {
   }
 
   getDocumentsByAuthor(author: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}?author=${author}`);
+    return this.http.get<any[]>(`${this.apiUrl}/author/${author}`);
   }
 
   createDocument(document: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, document);
   }
 
-  // ✅ For older components
   saveDocument(document: any): Observable<any> {
     return this.createDocument(document);
   }
@@ -35,7 +34,8 @@ export class DocumentService {
   deleteDocument(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
   submitForReview(id: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}/submit`, {}); // matches backend route
+    return this.http.put<any>(`${this.apiUrl}/${id}/submit`, {});
   }
 }

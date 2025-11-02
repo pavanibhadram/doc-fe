@@ -1,0 +1,47 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">📚 Final Documents</h2>
+
+    <!-- Inline message -->
+    <div *ngIf="message" [ngClass]="{
+      'text-green-600 bg-green-100': messageType === 'success',
+      'text-red-600 bg-red-100': messageType === 'error'
+    }" class="p-3 rounded mb-4 text-center font-medium">
+        {{ message }}
+    </div>
+
+    <div *ngIf="loading" class="text-gray-600 py-6 text-center">Loading...</div>
+
+    <div *ngIf="!loading && documents.length === 0" class="text-gray-500 text-center py-8">
+        No finalized documents found.
+    </div>
+
+    <div *ngFor="let doc of documents" class="bg-white rounded-2xl shadow p-5 mb-5 border border-gray-100">
+        <div class="flex justify-between items-start gap-4">
+            <div class="flex-1">
+                <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ doc.title }}</h3>
+                <p class="text-gray-700 mb-3 whitespace-pre-wrap">{{ doc.content }}</p>
+
+                <div class="text-sm text-gray-500 mb-2">
+                    <span class="font-semibold">Status:</span> {{ doc.status }}
+                </div>
+
+                <div class="text-sm text-gray-600">
+                    <div><span class="font-semibold">Approved By:</span> {{ doc.approvedBy || '—' }}</div>
+                    <div class="mt-1"><span class="font-semibold">Signature:</span> {{ doc.signature || '—' }}</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-end gap-3">
+                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                    (click)="viewDetails(doc)">
+                    View
+                </button>
+
+                <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                    (click)="downloadPDF(doc)">
+                    Download
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
