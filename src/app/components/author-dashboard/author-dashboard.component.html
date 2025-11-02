@@ -1,11 +1,22 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
     <h2 class="text-3xl font-bold text-gray-800 mb-6">📝 Author Dashboard</h2>
 
-    <!-- Create Document Button -->
-    <button (click)="toggleCreateForm()"
-        class="mb-6 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
-        + Create Document
-    </button>
+
+
+    <div class="flex items-center justify-between mb-4 gap-4">
+        <div class="flex items-center justify-between w-full">
+            <button (click)="toggleCreateForm()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">
+                + Create Document
+            </button>
+
+            <label class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">Filter:</span>
+                <select [(ngModel)]="selectedStatus" (change)="applyFilter()" class="border rounded px-3 py-1">
+                    <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+                </select>
+            </label>
+        </div>
+    </div>
 
     <!-- Create/Edit Form -->
     <div *ngIf="showCreateForm" class="bg-white rounded-2xl shadow p-6 border border-gray-100 mb-8">
@@ -15,45 +26,51 @@
 
         <div class="flex flex-col gap-3">
             <input type="text" [(ngModel)]="formData.title" placeholder="Enter document title"
-                class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200" />
+                class="border border-gray-300 rounded-lg px-3 py-2" />
 
-            <textarea [(ngModel)]="formData.content" placeholder="Enter document content" rows="4"
-                class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"></textarea>
+            <textarea [(ngModel)]="formData.content" placeholder="Enter document content" rows="6"
+                class="border border-gray-300 rounded-lg px-3 py-2"></textarea>
         </div>
 
         <div class="flex justify-end gap-3 mt-5">
-            <button class="bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition"
-                (click)="saveDraft()">
+
+            <!-- Create Mode -->
+            <button class="bg-gray-600 text-white px-5 py-2 rounded-lg" (click)="saveDraft()" *ngIf="!isEditing">
                 💾 Save Draft
             </button>
 
-            <button class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-                (click)="submitForReview()">
+            <button class="bg-blue-600 text-white px-5 py-2 rounded-lg" (click)="submitForReview()" *ngIf="!isEditing">
                 📤 Submit for Review
+            </button>
+
+            <!-- EDIT Mode Single Button -->
+            <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg" (click)="updateAndSendForReview()"
+                *ngIf="isEditing">
+                📤 Update & Send Back To Reviewer
             </button>
         </div>
     </div>
 
-    <!-- Documents List -->
-    <h3 class="text-2xl font-semibold text-gray-800 mb-4">My Documents</h3>
+    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Documents</h3>
 
-    <!-- No documents -->
-    <div *ngIf="documents.length === 0" class="text-gray-500 text-center py-8">
-        No documents found. Click <b>+ Create Document</b> to start!
+    <div *ngIf="filteredDocuments.length === 0" class="text-gray-500 text-center py-8">
+        No documents to show for the selected filter.
     </div>
 
-    <!-- Document Cards -->
-    <div *ngFor="let doc of documents" class="bg-white rounded-2xl shadow p-5 mb-5 border border-gray-100">
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ doc.title }}</h3>
-        <p class="text-gray-700 mb-3 whitespace-pre-wrap">{{ doc.content }}</p>
+    <div *ngFor="let doc of filteredDocuments" class="bg-white rounded-2xl shadow p-5 mb-5 border border-gray-100">
+        <div class="flex justify-between items-start gap-4">
+            <div class="flex-1">
+                <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ doc.title }}</h3>
+                <p class="text-gray-700 mb-3 whitespace-pre-wrap">{{ doc.content }}</p>
+                <p class="text-sm text-gray-500"><span class="font-semibold">Status:</span> {{ doc.status }}</p>
+            </div>
 
-        <p class="text-sm text-gray-500 mb-4">
-            <span class="font-semibold">Status:</span> {{ doc.status }}
-        </p>
-
-        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
-            (click)="editDocument(doc)">
-            ✏️ Edit
-        </button>
+            <div class="flex flex-col items-end gap-3">
+                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                    (click)="startEdit(doc)">
+                    ✏️ Edit
+                </button>
+            </div>
+        </div>
     </div>
 </div>

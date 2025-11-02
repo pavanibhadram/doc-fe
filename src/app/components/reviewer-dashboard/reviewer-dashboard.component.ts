@@ -24,16 +24,20 @@ export class ReviewerDashboardComponent implements OnInit {
       next: (data: any[]) => {
         this.documents = data.filter((d) => d.status === 'Under Review');
       },
-      error: (err) => console.error('Error loading documents', err),
+      error: (err) => {
+        console.error('Error loading documents', err);
+        alert('Failed to load documents for review.');
+      },
     });
   }
 
   approveDocument(id: string): void {
+    // set to Under Approver Review so approver will see it
     this.documentService
-      .updateDocument(id, { status: 'Approved by Reviewer' })
+      .updateDocument(id, { status: 'Under Approver Review' })
       .subscribe({
         next: () => {
-          alert('✅ Document approved successfully!');
+          alert('✅ Document approved and forwarded to Approver.');
           this.loadDocuments();
         },
         error: () => alert('❌ Failed to approve document.'),
@@ -45,7 +49,7 @@ export class ReviewerDashboardComponent implements OnInit {
       .updateDocument(id, { status: 'Sent Back to Author' })
       .subscribe({
         next: () => {
-          alert('📨 Document sent back to Author.');
+          alert('📨 Document sent back to author.');
           this.loadDocuments();
         },
         error: () => alert('❌ Failed to send back document.'),

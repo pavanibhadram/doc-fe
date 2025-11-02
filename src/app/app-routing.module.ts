@@ -7,6 +7,7 @@ import { ApproverDashboardComponent } from './components/approver-dashboard/appr
 import { roleGuard } from './guards/role.guard';
 import { DocumentApproveComponent } from './components/document-approve/document-approve.component';
 import { AuthorDashboardComponent } from './components/author-dashboard/author-dashboard.component';
+import { FinalDocumentsComponent } from './components/final-documents/final-documents.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -24,6 +25,7 @@ const routes: Routes = [
     canActivate: [roleGuard],
   },
   { path: 'author-dashboard', component: AuthorDashboardComponent },
+  { path: 'final-documents', component: FinalDocumentsComponent },
 ];
 
 @NgModule({
