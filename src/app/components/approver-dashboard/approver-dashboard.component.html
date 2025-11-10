@@ -43,6 +43,10 @@
                 Reviewer</button>
             <button (click)="approveAndSign()" class="bg-green-600 text-white px-4 py-2 rounded-lg">✅ Approve &
                 Sign</button>
+            <button class="bg-green-600 text-white px-4 py-2 rounded-lg" (click)="finalApprove(selectedDoc)">
+                ✅ Final Approve & Upload
+            </button>
+
             <button (click)="closeDocument()" class="bg-gray-500 text-white px-4 py-2 rounded-lg">Close</button>
         </div>
     </div>
