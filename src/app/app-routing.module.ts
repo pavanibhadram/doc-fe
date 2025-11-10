@@ -10,8 +10,7 @@ import { AuthorDashboardComponent } from './components/author-dashboard/author-d
 import { FinalDocumentsComponent } from './components/final-documents/final-documents.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+  { path: '', component: LoginComponent },
   { path: 'document-create', component: DocumentCreateComponent },
   { path: 'reviewer-dashboard', component: ReviewerDashboardComponent },
   {

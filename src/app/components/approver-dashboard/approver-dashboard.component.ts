@@ -113,4 +113,19 @@ export class ApproverDashboardComponent implements OnInit {
     this.messageType = type;
     setTimeout(() => (this.message = ''), 3000);
   }
+  finalApprove(doc: any) {
+    const signature = 'Pavani Signature';
+    const comment = prompt('Enter comment (optional)') || '';
+
+    // this.documentService.finalApprove(doc._id, signature, comment).subscribe(
+    //   (res: any) => {
+    //     alert('Final approved + uploaded to Google Drive ✅');
+    //     this.loadDocuments(); // <--- HERE FIXED
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //     alert('Error in final approve');
+    //   }
+    //);
+  }
 }
